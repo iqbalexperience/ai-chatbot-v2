@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 import { toast } from 'sonner'
 import { IconSpinner } from './ui/icons'
 import { getMessageFromCode } from '@/lib/utils'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -23,6 +23,12 @@ export default function LoginForm() {
       }
     }
   }, [result, router])
+
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    console.log(searchParams.get('code'))
+  }, [])
 
   return (
     <form

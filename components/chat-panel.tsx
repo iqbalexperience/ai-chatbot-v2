@@ -4,13 +4,22 @@ import { shareChat } from '@/app/actions'
 import { Button } from '@/components/ui/button'
 import { PromptForm } from '@/components/prompt-form'
 import { ButtonScrollToBottom } from '@/components/button-scroll-to-bottom'
-import { IconShare } from '@/components/ui/icons'
+import { IconPlus, IconShare } from '@/components/ui/icons'
 import { FooterText } from '@/components/footer'
 import { ChatShareDialog } from '@/components/chat-share-dialog'
 import { useAIState, useActions, useUIState } from 'ai/rsc'
 import type { AI } from '@/lib/chat/actions'
 import { nanoid } from 'nanoid'
 import { UserMessage } from './stocks/message'
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
+import { useRouter } from 'next/navigation'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from './ui/select'
 
 export interface ChatPanelProps {
   id?: string
@@ -33,7 +42,8 @@ export function ChatPanel({
   const [messages, setMessages] = useUIState<typeof AI>()
   const { submitUserMessage } = useActions()
   const [shareDialogOpen, setShareDialogOpen] = React.useState(false)
-
+  const [chatbotSelect, setChatbotSelect] = React.useState('gpt-3.5-turbo-1106')
+  const router = useRouter()
   const exampleMessages = [
     {
       heading: 'What are the',
@@ -65,7 +75,7 @@ export function ChatPanel({
       />
 
       <div className="mx-auto sm:max-w-2xl sm:px-4">
-        <div className="mb-4 grid grid-cols-2 gap-2 px-4 sm:px-0">
+        <div className="mb-2 grid grid-cols-2 gap-2 px-4 sm:px-0">
           {messages.length === 0 &&
             exampleMessages.map((example, index) => (
               <div
@@ -83,7 +93,8 @@ export function ChatPanel({
                   ])
 
                   const responseMessage = await submitUserMessage(
-                    example.message
+                    example.message,
+                    chatbotSelect
                   )
 
                   setMessages(currentMessages => [
@@ -129,9 +140,42 @@ export function ChatPanel({
           </div>
         ) : null}
 
-        <div className="space-y-4 border-t bg-background px-4 py-2 shadow-lg sm:rounded-t-xl sm:border md:py-4">
-          <PromptForm input={input} setInput={setInput} />
-          <FooterText className="hidden sm:block" />
+        <div className="flex flex-col">
+          <div className="mb-2 flex flex-row space-x-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="flex size-8 rounded p-0 border"
+                  onClick={() => {
+                    router.push('/new')
+                  }}
+                >
+                  <IconPlus />
+                  <span className="sr-only">New Chat</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>New Chat</TooltipContent>
+            </Tooltip>
+            <Select value={chatbotSelect} onValueChange={setChatbotSelect}>
+              <SelectTrigger className="w-fit h-8">
+                <SelectValue placeholder="Chatbot" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="gpt-3.5-turbo-1106">
+                  GPT 3.5 Turbo
+                </SelectItem>
+                <SelectItem value="gpt-4-1106-preview">GPT 4</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <PromptForm
+            input={input}
+            setInput={setInput}
+            chatbotSelect={chatbotSelect}
+          />
+          {/* <FooterText className="hidden sm:block" /> */}
         </div>
       </div>
     </div>

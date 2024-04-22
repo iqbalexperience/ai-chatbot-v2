@@ -20,10 +20,12 @@ import { useRouter } from 'next/navigation'
 
 export function PromptForm({
   input,
-  setInput
+  setInput,
+  chatbotSelect
 }: {
   input: string
   setInput: (value: string) => void
+  chatbotSelect: string
 }) {
   const router = useRouter()
   const { formRef, onKeyDown } = useEnterSubmit()
@@ -62,12 +64,12 @@ export function PromptForm({
         ])
 
         // Submit and get response message
-        const responseMessage = await submitUserMessage(value)
+        const responseMessage = await submitUserMessage(value, chatbotSelect)
         setMessages(currentMessages => [...currentMessages, responseMessage])
       }}
     >
-      <div className="relative flex max-h-60 w-full grow flex-col overflow-hidden bg-background px-8 sm:rounded-md sm:border sm:px-12">
-        <Tooltip>
+      <div className="relative mb-2 flex max-h-60 w-full grow flex-col overflow-hidden bg-background pr-8  sm:rounded-md sm:border sm:pr-12 pl-0">
+        {/* <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="outline"
@@ -82,7 +84,7 @@ export function PromptForm({
             </Button>
           </TooltipTrigger>
           <TooltipContent>New Chat</TooltipContent>
-        </Tooltip>
+        </Tooltip> */}
         <Textarea
           ref={inputRef}
           tabIndex={0}
