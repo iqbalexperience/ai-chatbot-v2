@@ -36,8 +36,6 @@ import { SpinnerMessage, UserMessage } from '@/components/stocks/message'
 import { Chat } from '@/lib/types'
 import { auth } from '@/auth'
 
-export const maxDuration = 60
-export const runtime = 'edge'
 async function confirmPurchase(symbol: string, price: number, amount: number) {
   'use server'
 
