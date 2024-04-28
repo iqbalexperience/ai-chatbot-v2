@@ -157,53 +157,65 @@ async function submitUserMessage(content: string, model: string) {
   let textStream: undefined | ReturnType<typeof createStreamableValue<string>>
   let textNode: undefined | React.ReactNode
 
-  const ui = render({
-    model: model,
-    provider: openai,
-    initial: <SpinnerMessage />,
-    messages: [
-      {
-        role: 'system',
-        content: `\
+  try {
+    const ui = render({
+      model: model,
+      provider: openai,
+      initial: <SpinnerMessage />,
+      messages: [
+        {
+          role: 'system',
+          content: `\
 You are a general purpose AI bot ${model} of workengine and you can help users to achieve their tasks.`
-      },
-      ...aiState.get().messages.map((message: any) => ({
-        role: message.role,
-        content: message.content,
-        name: message.name
-      }))
-    ],
-    text: ({ content, done, delta }) => {
-      if (!textStream) {
-        textStream = createStreamableValue('')
-        textNode = <BotMessage content={textStream.value} />
-      }
+        },
+        ...aiState.get().messages.map((message: any) => ({
+          role: message.role,
+          content: message.content,
+          name: message.name
+        }))
+      ],
+      text: ({ content, done, delta }) => {
+        if (!textStream) {
+          textStream = createStreamableValue('')
+          textNode = <BotMessage content={textStream.value} />
+        }
 
-      if (done) {
-        textStream.done()
-        aiState.done({
-          ...aiState.get(),
-          messages: [
-            ...aiState.get().messages,
-            {
-              id: nanoid(),
-              role: 'assistant',
-              content
-            }
-          ]
-        })
-      } else {
-        textStream.update(delta)
-      }
+        if (done) {
+          textStream.done()
+          aiState.done({
+            ...aiState.get(),
+            messages: [
+              ...aiState.get().messages,
+              {
+                id: nanoid(),
+                role: 'assistant',
+                content
+              }
+            ]
+          })
+        } else {
+          textStream.update(delta)
+        }
 
-      return textNode
+        return textNode
+      }
+    })
+    return {
+      id: nanoid(),
+      display: ui
     }
-  })
-
-  return {
-    id: nanoid(),
-    display: ui
+  } catch (error) {
+    console.log(error)
+    return {
+      id: nanoid(),
+      display: 'ui'
+    }
   }
+
+  // return {
+  //   id: nanoid(),
+  //   display: ui
+  // }
 }
 
 export type Message = {
