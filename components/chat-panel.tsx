@@ -159,14 +159,26 @@ export function ChatPanel({
               <TooltipContent>New Chat</TooltipContent>
             </Tooltip>
             <Select value={chatbotSelect} onValueChange={setChatbotSelect}>
-              <SelectTrigger className="w-fit h-8">
+              <SelectTrigger className="w-fit h-8 bg-background">
                 <SelectValue placeholder="Chatbot" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="gpt-3.5-turbo-1106">
-                  GPT 3.5 Turbo
+                  GPT 3.5 Turbo (OpenAI)
                 </SelectItem>
-                <SelectItem value="gpt-4-1106-preview">GPT 4</SelectItem>
+                <SelectItem value="gpt-4-1106-preview">
+                  GPT 4 (OpenAI)
+                </SelectItem>
+                <SelectItem value="llama3-8b-8192">
+                  Llama 3 - 8b (Groq)
+                </SelectItem>
+                <SelectItem value="llama3-70b-8192">
+                  Llama 3 - 70b (Groq)
+                </SelectItem>
+                <SelectItem value="gemma-7b-it">Gemma - 7b (Groq)</SelectItem>
+                <SelectItem value="mixtral-8x7b-32768">
+                  Mixtral - 8x7b (Groq)
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>

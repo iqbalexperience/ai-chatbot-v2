@@ -36,10 +36,6 @@ import { SpinnerMessage, UserMessage } from '@/components/stocks/message'
 import { Chat } from '@/lib/types'
 import { auth } from '@/auth'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || ''
-})
-
 async function confirmPurchase(symbol: string, price: number, amount: number) {
   'use server'
 
@@ -123,6 +119,24 @@ async function confirmPurchase(symbol: string, price: number, amount: number) {
 
 async function submitUserMessage(content: string, model: string) {
   'use server'
+  const openAIModels = ['gpt-3.5-turbo-1106', 'gpt-4-1106-preview']
+  const groqModel = [
+    'llama3-8b-8192',
+    'llama3-70b-8192',
+    'gemma-7b-it',
+    'mixtral-8x7b-32768'
+  ]
+  let openai: any = ''
+  if (openAIModels.includes(model)) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY || ''
+    })
+  } else if (groqModel.includes(model)) {
+    openai = new OpenAI({
+      apiKey: process.env.GROQ_API_KEY ?? '',
+      baseURL: 'https://api.groq.com/openai/v1'
+    })
+  }
 
   const aiState = getMutableAIState<typeof AI>()
 
@@ -149,7 +163,7 @@ async function submitUserMessage(content: string, model: string) {
       {
         role: 'system',
         content: `\
-You are a general purpose AI bot developed by workengine and you can help users to achieve their tasks.`
+You are a general purpose AI bot ${model} of workengine and you can help users to achieve their tasks.`
       },
       ...aiState.get().messages.map((message: any) => ({
         role: message.role,
