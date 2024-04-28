@@ -8,7 +8,7 @@ import { getMissingKeys } from '../actions'
 export const metadata = {
   title: 'Workengine AI Chatbot'
 }
-
+export const maxDuration = 60
 export default async function IndexPage() {
   const id = nanoid()
   const session = (await auth()) as Session
